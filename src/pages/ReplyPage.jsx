@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import Post from "../components/Post"
 import Reply from '../components/Reply';
 import { useParams } from "react-router-dom";
 import { Flex, Spinner } from "@chakra-ui/react";
 import NewReply from '../components/NewReply';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-const PostPage = React.memo( () => {
+const ReplyPage = React.memo( () => {
   const navigate=useNavigate();
   const { id } = useParams();
-  const [post,setPost]=useState(null);
+  const [reply,setReply]=useState(null);
   const [loading,setLoading]=useState(true);
   const [postReplies,setPostReplies]=useState([]);
   useEffect(()=>{
-    const getPost=async()=>{
+    const getReply=async()=>{
       try{
         const token= localStorage.getItem('authToken');
         const sendConfig={
           method:"POST",
-          url:`${import.meta.env.VITE_API_BASE_URL}/posts/get/${id}`,
+          url:`${import.meta.env.VITE_API_BASE_URL}/reply/get/${id}`,
           headers:{
             Authorization: `Bearer ${token}`,
              "Content-Type": "application/json",
@@ -32,13 +31,13 @@ const PostPage = React.memo( () => {
           console.log(response.error);
           return;
         }
-        setPost(response.result);
+        setReply(response.result);
       }
       catch(err){
         console.log(err);
         setLoading(false);
       }
-      console.log("PostPage");
+
     }
     const getPostReplies=async()=>{
       try{
@@ -71,7 +70,7 @@ const PostPage = React.memo( () => {
         setLoading(false);
       }
     }
-    getPost();
+    getReply();
     getPostReplies()
   },[]);
   return (
@@ -81,7 +80,7 @@ const PostPage = React.memo( () => {
             <Spinner size="xl"></Spinner>
           </Flex>
         )}
-        {!loading && post &&<> <Post post={post} key={`/post/${post._id}`} />  <NewReply key={id} postId={post._id} /> </>}
+        {!loading && reply &&<> <Reply reply={reply} key={`/reply/${reply._id}`} />  <NewReply key={id} postId={reply._id} nesting_level={1} /> </>}
        
      {!loading && postReplies.map((reply)=>(<Reply key = {reply._id} reply={reply}/>))}
     
@@ -89,4 +88,4 @@ const PostPage = React.memo( () => {
   )
 })
 
-export default PostPage
+export default ReplyPage

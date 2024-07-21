@@ -15,7 +15,7 @@ import { Link as RouterLink } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-const LikePage = React.memo(() => {
+const ReplyLikePage = React.memo(() => {
   const { id } = useParams();
   const [likesArray, setLikesArray] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ const LikePage = React.memo(() => {
       const token = localStorage.getItem('authToken');
       const sendConfig={
         method:"POST",
-        url:`${import.meta.env.VITE_API_BASE_URL}/posts/get/likes/${id}`,
+        url:`${import.meta.env.VITE_API_BASE_URL}/reply/get/likes/${id}`,
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -126,4 +126,4 @@ const LikePage = React.memo(() => {
   );
 });
 
-export default LikePage;
+export default ReplyLikePage;

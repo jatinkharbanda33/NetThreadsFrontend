@@ -13,33 +13,37 @@ import { Link } from "@chakra-ui/layout";
 import { Link as RouterLink } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 const SearchPage = React.memo(() => {
+  const navigate=useNavigate();
   const [searchArray, setSearchArray] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
-  const [searchQuery,setSearchQuery]=useState("");
-
+  const [searchQuery, setSearchQuery] = useState("");
   const getResults = async (isInitialLoad = false) => {
-    if (!hasMore || loading || searchQuery.length==0) return;
+    if (!hasMore || loading || searchQuery.length == 0) return;
 
     setLoading(true);
     try {
-      const reqBody = {lastFetchedId:searchArray.length>0?searchArray[searchArray.length-1]._id:0,username:searchQuery};
+      const reqBody = {
+        lastFetchedId:
+          searchArray.length > 0 ? searchArray[searchArray.length - 1]._id : 0,
+        username: searchQuery,
+      };
       const token = localStorage.getItem("authToken");
-      const sendConfig={
-        method:"POST",
-        url:`/api/search/users`,
+      const sendConfig = {
+        method: "POST",
+        url: `${import.meta.env.VITE_API_BASE_URL}/search/users`,
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        data:reqBody
-
-      }
-      const request = await axios(sendConfig)
-      const response=request.data;
+        data: reqBody,
+      };
+      const request = await axios(sendConfig);
+      if(request.status==401) navigate("/");
+      const response = request.data;
 
       if (response.err) {
         console.error(response.err);
@@ -53,7 +57,7 @@ const SearchPage = React.memo(() => {
 
       // Check if there are more items to load
       console.log(newItems[0]);
-      setHasMore(newItems.length==30);
+      setHasMore(newItems.length == 30);
     } catch (error) {
       console.error(error);
     } finally {
@@ -62,7 +66,7 @@ const SearchPage = React.memo(() => {
   };
 
   useEffect(() => {
-    getLikes(true); 
+    getLikes(true);
   }, []);
 
   return (
@@ -76,10 +80,10 @@ const SearchPage = React.memo(() => {
             loader={<Spinner />}
             endMessage={
               <p style={{ textAlign: "center", padding: "20px 0" }}>
-              <b>
-                {likesArray.length === 0 ? "No Likes Yet" : "No More Likes"}
-              </b>
-            </p>
+                <b>
+                  {likesArray.length === 0 ? "No Likes Yet" : "No More Likes"}
+                </b>
+              </p>
             }
           >
             {likesArray.map((item) => (
@@ -99,9 +103,8 @@ const SearchPage = React.memo(() => {
                             {item?.username}
                           </Text>
                         </Link>
-                        
-                          <Image src="/verified.png" w={4} h={4} />
-                      
+
+                        <Image src="/verified.png" w={4} h={4} />
                       </HStack>
                       <Text color={"grey"}>{item?.name}</Text>
                     </VStack>

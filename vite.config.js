@@ -7,12 +7,6 @@ export default defineConfig({
   server:{
     host:true,
     port:3000,
-    proxy:{
-      "/api":{
-        target: "https://netthreads.jumpingcrab.com",
-				changeOrigin: true,
-				secure: true,
-      }
-    }
+   
   }
 })
