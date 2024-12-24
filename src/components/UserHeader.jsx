@@ -62,7 +62,7 @@ const UserHeader = ({ user }) => {
       const token = localStorage.getItem('authToken');
       const sendConfig={
         method:"POST",
-        url:`${process.env.VITE_API_BASE_URL}/users/update/profilepicture`,
+        url:`${import.meta.env.VITE_API_BASE_URL}/users/update/profilepicture`,
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
