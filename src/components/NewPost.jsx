@@ -63,10 +63,10 @@ const NewPost = () => {
           },
           body: file,
         });
+        clearFile();
       }
       setThread("");
       // setFilePreview(null);
-      clearFile();
       toast.success("Post Added");
     } catch (err) {
       toast.error("An Unexpected Error Occurred");
@@ -78,6 +78,7 @@ const NewPost = () => {
   const fileInputRef = useRef(null);
   const userPath = `/user/${currentuser?._id}`;
   const handleReset=()=>{
+    console.log("trying to reset")
     setThread("");
     clearFile();
 
@@ -117,6 +118,7 @@ const NewPost = () => {
               placeholder="Start a NetThread..."
               size="lg"
               focusBorderColor="grey"
+              value={thread}
               onChange={(e) => {
                 setThread(e.target.value);
               }}

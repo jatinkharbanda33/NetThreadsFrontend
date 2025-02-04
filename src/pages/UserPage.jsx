@@ -36,7 +36,6 @@ const UserPage = React.memo(() => {
           return;
         }
         setUserProfile(response);
-        console.log(response);
       } catch (err) {
         console.log(err);
       } finally {

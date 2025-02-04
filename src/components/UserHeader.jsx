@@ -3,23 +3,31 @@ import { Box, HStack, Flex, Link, Text, VStack } from "@chakra-ui/layout";
 import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/menu";
 import { Portal } from "@chakra-ui/portal";
 import { useSelector } from "react-redux";
-import { Button, Input, Icon,Image,useColorMode, Spinner,Code } from "@chakra-ui/react";
+import {
+  Button,
+  Input,
+  Icon,
+  Image,
+  useColorMode,
+  Spinner,
+  Code,
+} from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import { CgMoreO } from "react-icons/cg";
 import { Link as RouterLink } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import useFileUpload from "../hooks/use-File-Upload";
 import ImageModal from "../modals/ImageModal";
-import {toast} from 'sonner';
+import { toast } from "sonner";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const UserHeader = ({ user }) => {
-  const navigate=useNavigate();
-  const [loading,setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const currentuser = useSelector((state) => state.user);
   const { file, handleFileChange, filePreview, clearFile, setFilePreview } =
     useFileUpload();
-    const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   // useEffect(() => {
   //   if (file) {
@@ -42,105 +50,105 @@ const UserHeader = ({ user }) => {
   const copyURL = () => {
     const currentURL = window.location.href;
     navigator.clipboard.writeText(currentURL).then(() => {
-      toast.success("Copied to Clipboard",currentURL);
+      toast.success("Copied to Clipboard", currentURL);
     });
   };
 
   const changeProfilePicture = async () => {
     setLoading(true);
-    try{
-    if (!file) {
-      console.log("No file");
-      return;
-    }
-    const requestBody = {};
-    if (file) {
-      requestBody.file_name = file.name;
-      requestBody.file_content_type = file.type;
-      console.log(requestBody);
-    }
-      const token = localStorage.getItem('authToken');
-      const sendConfig={
-        method:"POST",
-        url:`${import.meta.env.VITE_API_BASE_URL}/users/update/profilepicture`,
+    try {
+      if (!file) {
+        return;
+      }
+      let requestBody = {};
+      if (file) {
+        requestBody.file_name = file.name;
+        requestBody.file_content_type = file.type;
+      }
+      const token = localStorage.getItem("authToken");
+      const sendConfig = {
+        method: "POST",
+        url: `${import.meta.env.VITE_API_BASE_URL}/users/update/profilepicture`,
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        data:requestBody
-
-      }
-      const request=await axios(sendConfig)
-      if(request.status==401) navigate("/");
-      const response=await request.data;
-      console.log(response);
-
+        data: requestBody,
+      };
+      const request = await axios(sendConfig);
+      if (request.status == 401) navigate("/");
+      const response = await request.data;
       if (response.error) {
         console.log(response.error);
         return;
       }
       if (!response.status) {
-        console.log("error :400");
         return;
       }
-      console.log(response.url);
+      clearFile();
       if (response.url) {
         await fetch(response.url, {
           method: "PUT",
           headers: {
             "Content-Type": file.type,
           },
-          body: file
+          body: file,
         });
       }
-    
-    }
-    catch(err){
+      setFetchAgain(true);
+    } catch (err) {
       console.log(err);
-
-    }
-    finally{
+    } finally {
       setLoading(false);
     }
   };
   useEffect(() => {
     const getuserprofile = async () => {
       try {
-        const token = localStorage.getItem('authToken');
-        const sendConfig={
-          method:"GET",
-          url:`${import.meta.env.VITE_API_BASE_URL}/users/profile/${user}`,
+        const token = localStorage.getItem("authToken");
+        const sendConfig = {
+          method: "GET",
+          url: `${import.meta.env.VITE_API_BASE_URL}/users/profile/${user}`,
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          data:requestBody
-  
-        }
-        const request=await axios(sendConfig)
-        const response=await request.data;
+          data: {},
+        };
+        const request = await axios(sendConfig);
+        const response = await request.data;
         if (response.error) {
           console.log(response.error);
           return;
         }
         user = response;
+        console.log("again ", user);
         setisfollowing(response.isfollowing === 1 ? true : false);
       } catch (err) {
         console.log(err);
       }
     };
+
+    console.log("Callinng it");
     getuserprofile();
-  }, []);
+  });
   if (!user) return <h1>No user found</h1>;
   return (
     <VStack gap={4} alignItems={"start"}>
-      <Flex justifyContent={"space-between"} w={"full"} marginTop={'14'} paddingX={'6'}>
+      <Flex
+        justifyContent={"space-between"}
+        w={"full"}
+        marginTop={"14"}
+        paddingX={"6"}
+      >
         <Box>
           <Text fontSize={"3xl"} fontWeight={"bold"}>
             {user.name}
           </Text>
           <Flex gap={4} alignItems={"center"}>
-            <Text fontSize={"md"} color={"gray"}>~{user.username}</Text>
+            <Text fontSize={"md"} color={"gray"}>
+              ~{user.username}
+            </Text>
             <Code
               fontSize={"sm"}
               bg={"gray"}
@@ -152,19 +160,19 @@ const UserHeader = ({ user }) => {
             </Code>
           </Flex>
         </Box>
-        <Box  position={"relative"} display={"inline-block"}>
+        <Box position={"relative"} display={"inline-block"}>
           {user.profilepicture && (
             <Avatar
               name={user.name}
               src={user.profilepicture}
               transition="opacity 0.2s"
-              _hover={{  
+              _hover={{
                 transform: "scale(1.2)",
-                transition: "transform 0.5s ease-in-out"
+                transition: "transform 0.5s ease-in-out",
               }}
               size={{
                 base: "md",
-                md: '2xl',
+                md: "2xl",
               }}
             />
           )}
@@ -193,12 +201,11 @@ const UserHeader = ({ user }) => {
                   onClick={handleIconClick}
                   style={{ cursor: "pointer", border: "none", padding: 0 }}
                 />
-                {file && file!=null && (
+                {file && file != null && (
                   <>
-                      <ImageModal filePreview={filePreview} />
-                      <Button onClick={changeProfilePicture}>Update</Button>
+                    <ImageModal filePreview={filePreview} />
+                    <Button onClick={changeProfilePicture}>Update</Button>
                   </>
-                  
                 )}
               </HStack>
             </Box>
@@ -210,15 +217,25 @@ const UserHeader = ({ user }) => {
       <Flex w={"full"} justifyContent={"left"} margin={6} gap={2}>
         {currentuser?._id === user._id && (
           <Link as={RouterLink} to="/user/updateinfo">
-            <Button size={"sm"} 
-            bg={colorMode == 'dark' ? 'white':'black'} 
-            color={colorMode == 'dark' ? 'black' : 'white'} _hover={{bg : 'white', color: 'black'}}>Update Profile</Button>
+            <Button
+              size={"sm"}
+              bg={colorMode == "dark" ? "white" : "black"}
+              color={colorMode == "dark" ? "black" : "white"}
+              _hover={{ bg: "white", color: "black" }}
+            >
+              Update Profile
+            </Button>
           </Link>
         )}
         <Button
-          bg={colorMode == 'dark' ? 'white':'black'} 
-          color={colorMode == 'dark' ? 'black' : 'white'}
-         size={"sm"} onClick={()=>{}} _hover={{bg : 'white', color: 'black'}}>Share Profile</Button>
+          bg={colorMode == "dark" ? "white" : "black"}
+          color={colorMode == "dark" ? "black" : "white"}
+          size={"sm"}
+          onClick={() => {}}
+          _hover={{ bg: "white", color: "black" }}
+        >
+          Share Profile
+        </Button>
       </Flex>
       <Flex w={"full"} justifyContent={"space-between"}>
         <Flex gap={2} alignItems={"center"}>
@@ -229,16 +246,14 @@ const UserHeader = ({ user }) => {
         </Flex>
         <Flex>
           <Box className="icon-container">
-          <Image
-                  cursor={"pointer"}
-                  alt="logo"
-                  w={6}
-                  src={
-                    colorMode === "dark"
-                      ? "/dark_n_new.png"
-                      : "/light_n_new.png"
-                  }
-                />
+            <Image
+              cursor={"pointer"}
+              alt="logo"
+              w={6}
+              src={
+                colorMode === "dark" ? "/dark_n_new.png" : "/light_n_new.png"
+              }
+            />
           </Box>
           <Box className="icon-container">
             <Menu>

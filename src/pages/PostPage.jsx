@@ -38,7 +38,6 @@ const PostPage = React.memo( () => {
         console.log(err);
         setLoading(false);
       }
-      console.log("PostPage");
     }
     const getPostReplies=async()=>{
       try{

@@ -116,8 +116,8 @@ const Post = React.memo(
     };
 
     return (
-      <>
-        <Flex borderColor={"gray"}>
+      <Box width="100%" overflowX="hidden">
+        <Flex borderColor={"gray"} >
           <VStack>
             <Avatar
               size="md"
@@ -221,7 +221,7 @@ const Post = React.memo(
           borderColor={dividerColor}
           borderWidth="1px"
         />
-      </>
+      </Box>
     );
   },
   (prevProps, nextProps) => {

@@ -34,12 +34,10 @@ const HomePage = React.memo(() => {
       const request = await axios(sendConfig);
       if(request.status==401) navigate("/");
       const response = request.data;
-      console.log(response);
       if (response.error) {
         console.log(response.error);
         return;
       }
-      console.log(response);
       if (isInitialLoad) {
         dispatch(changePost(response)); 
       } else {
@@ -62,19 +60,21 @@ const HomePage = React.memo(() => {
   }, []);
 
   return (
-    <Flex gap="10" alignItems={"flex-start"} overflow="hidden">
-      <Box flex={70} style={{ width: "100%" }}>
+    <Flex gap="10" alignItems={"flex-start"} overflowX="hidden" style={{ width: "100%", overflowX: "hidden" }} >
+      <Box flex={70} style={{ width: "100%" , maxWidth: "100%"}}>
         <NewPost />
-        {posts.length > 0 && (
+        {posts.length > 0  && (
+          <Box width="100%">
           <InfiniteScroll
             dataLength={posts.length}
-            next={() => getFeedPosts()} // Ensuring the correct function signature
+            next={() => getFeedPosts()}
+            overflow="hidden" // Ensuring the correct function signature
             hasMore={hasMore}
-            loader={<Flex justify={"center"} align={"center"} py={"20px"}>
+            loader={<Flex justify={"center"} align={"center"} py={"20px"} style={{ width: "100%" }}>
               <Spinner size="xl" />
             </Flex>}
             endMessage={
-              <Flex justifyContent={'center'} py={'20px'}>
+              <Flex overflow="hidden" justifyContent={'center'} py={'20px'}  overflowX="hidden">
                 <b>
                   {posts.length === 0? "No Posts Yet" : "No More Posts"}
                 </b>
@@ -82,10 +82,11 @@ const HomePage = React.memo(() => {
             }
           >
             {posts.map((post) => (
-              <Post key={`/home/post/${post._id}`} post={post} />
+              <Post key={`/home/post/${post._id}`} post={post}  overflowX="hidden" maxWidth="100%" />
             ))}
           </InfiniteScroll>
-        )}
+          </Box>
+        ) }
       </Box>
       <Box
         flex={30}
