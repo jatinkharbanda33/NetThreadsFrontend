@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { addInCache } from "../redux/slices/searchCacheSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "sonner";
-import UserSearchCard from "../components/userSearchCard";
+import UserSearchCard from "../components/UserSearchCard";
 
 const SearchPage = React.memo(() => {
   const navigate = useNavigate();
