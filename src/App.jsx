@@ -11,6 +11,7 @@ const LikePage = lazy(() => import("./pages/LikePage"));
 const PostPage = lazy(() => import("./pages/PostPage"));
 const UserPage = lazy(() => import("./pages/UserPage"));
 const UpdateInfo = lazy(() => import("./pages/UpdateInfo"));
+const SearchPage=lazy(()=>import ("./pages/SearchPage"));
 import { Toaster } from "sonner";
 import axios from "axios";
 import ReplyPage from "./pages/ReplyPage";
@@ -167,6 +168,17 @@ const App = React.memo(() => {
                 element={
                   isUser || localStorage.getItem("authToken") ? (
                     <UpdateInfo />
+                  ) : (
+                    <Navigate to="/auth" />
+                  )
+                }
+              />
+              <Route path="/" element={<Navigate to="/auth" />} />
+              <Route
+                path="/user/search"
+                element={
+                  isUser || localStorage.getItem("authToken") ? (
+                    <SearchPage />
                   ) : (
                     <Navigate to="/auth" />
                   )
