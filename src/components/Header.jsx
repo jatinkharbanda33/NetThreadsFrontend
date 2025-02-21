@@ -93,7 +93,7 @@ const Header = () => {
   if (loading) return null;
   return (
     <Flex justifyContent={"space-between"} mt={6} mb={6}>
-      {user && pathname == "/home" ? (
+      {user && (pathname == "/home" || pathname=="/home/") ? (
         <Link as={RouterLink} to="/home" mr={8}>
           <AiFillHome size={24} />
         </Link>
@@ -111,7 +111,7 @@ const Header = () => {
         />
       </Link>
       <HStack gap={6}>
-      {user && pathname == "/home" && (
+      {user && (pathname == "/home" || pathname=="/home/") && (
         <Link as={RouterLink} to="/user/search">
           <FaSearch size={24} />
         </Link>
