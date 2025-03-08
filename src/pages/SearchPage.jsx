@@ -54,8 +54,7 @@ const SearchPage = React.memo(() => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
+  const updateSearchResult=()=>{
     setLoading(true);
     setPage(0);
     setHasMore(true);
@@ -68,6 +67,13 @@ const SearchPage = React.memo(() => {
       setSearchArray(searchCache[searchQuery].values);
       setLoading(false);
     }
+  }
+  useEffect(() => {
+    const timer=setTimeout(()=>{
+      updateSearchResult();
+    },300);
+    return ()=>clearTimeout(timer);
+  
   }, [searchQuery]);
 
   return (
