@@ -1,61 +1,59 @@
 import React from "react";
 import { Avatar } from "@chakra-ui/avatar";
 import { Image } from "@chakra-ui/image";
-import { Box, Flex, Text } from "@chakra-ui/layout";
-import { Link as RouterLink } from "react-router-dom";
-import {
-    Link,
-  VStack,
-  HStack,
-  Divider,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/layout";
+import { Box, useColorModeValue } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 const UserSearchCard = ({ userDetails }) => {
-  const dividerColor = useColorModeValue("black", "gray.500");
+  const navigate = useNavigate();
+  const cardBg = useColorModeValue("white", "#151515");
+  const hoverBg = useColorModeValue("gray.50", "#202020");
+  const borderColor = useColorModeValue("gray.200", "gray.800");
+  const secondaryText = useColorModeValue("gray.600", "gray.400");
+  console.log(userDetails);
   return (
-    <>
-      <Flex
-       
-        p={2}
-        mb={4}
-        w="full"
-        alignItems="center"
-      >
+    <Box
+      w="full"
+      bg={cardBg}
+      borderRadius="lg"
+      border="1px"
+      borderColor={borderColor}
+      overflow="hidden"
+      transition="all 0.2s"
+      _hover={{
+        bg: hoverBg,
+        transform: "translateY(-2px)",
+        boxShadow: "sm",
+        cursor: "pointer",
+      }}
+      onClick={() => navigate(`/user/${userDetails._id}`)}
+    >
+      <Flex p={4} alignItems="center" gap={4}>
         <Avatar
-          size="md"
+          size="lg"
           src={userDetails?.profilepicture || "https://bit.ly/broken-link"}
-          mr={4}
+          name={userDetails.username}
+          borderRadius="full"
+          border="2px"
+          borderColor={borderColor}
         />
-        <Flex flex={1} flexDirection={"column"} gap={2}>
-          <Flex justifyContent={"space-between"} w={"full"}>
-            <Flex w={"full"} alignItems={"center"}>
-              <HStack gap={2}>
-                <Link as ={RouterLink} to={`/user/${userDetails._id}`}>
-                <Text
-                  fontSize={"l"}
-                  fontWeight={"bold"}
-                  _hover={{
-                    boxShadow: "0 0 20px rgba(128, 128, 128, 0.7)",
-                    bg: "transparent",
-                  }}
-                  onClick={() => {}}
-                >
-                  {userDetails.username}
-                </Text>
-                </Link>
-                <Image src="/verified.png" w={4} h={4} />
-              </HStack>
-            </Flex>
+
+        <Box flex="1">
+          <Flex alignItems="center" gap={2} mb={1}>
+            <Text fontSize="lg" fontWeight="bold">
+              {userDetails.name}
+            </Text>
+            {userDetails.verified && (
+              <Image src="/verified.png" w={5} h={5} alt="Verified" />
+            )}
           </Flex>
-        </Flex>
+          <Box spacing={4} color={secondaryText} fontSize="sm">
+            <Text>@{userDetails?.username?.toLowerCase()}</Text>
+          </Box>
+        </Box>
       </Flex>
-      <Divider
-        orientation="horizontal"
-        borderColor={dividerColor}
-        borderWidth="1px"
-      />
-    </>
+    </Box>
   );
 };
 

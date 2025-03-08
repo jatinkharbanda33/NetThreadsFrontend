@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Box, Flex, Input, Spinner } from "@chakra-ui/react";
+import { 
+  Box, 
+  Flex, 
+  Input, 
+  Spinner, 
+  Container, 
+  InputGroup, 
+  InputLeftElement,
+  Text,
+  VStack,
+  useColorModeValue
+} from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { addInCache } from "../redux/slices/searchCacheSlice";
@@ -16,6 +28,9 @@ const SearchPage = React.memo(() => {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch();
+  const bgColor = useColorModeValue("white", "#101010");
+  const borderColor = useColorModeValue("gray.200", "gray.800");
+  const placeholderColor = useColorModeValue("gray.400", "gray.500");
 
   const getResults = async () => {
     try {
@@ -55,7 +70,6 @@ const SearchPage = React.memo(() => {
     }
   };
   const updateSearchResult=()=>{
-    setLoading(true);
     setPage(0);
     setHasMore(true);
     if (
@@ -69,6 +83,7 @@ const SearchPage = React.memo(() => {
     }
   }
   useEffect(() => {
+    setLoading(true);
     const timer=setTimeout(()=>{
       updateSearchResult();
     },300);
@@ -77,31 +92,82 @@ const SearchPage = React.memo(() => {
   }, [searchQuery]);
 
   return (
-    <Flex w="full" direction="column" alignItems="center">
-      <Box w="full">
-        <Input
-          type="text"
-          variant="unstyled"
-          p={3}
-          placeholder="Search here"
-          size="lg"
-          focusBorderColor="grey"
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-          }}
-        ></Input>
-      </Box>
-      {loading && (
-        <Flex justify={"center"}>
-          <Spinner size="xl"></Spinner>
-        </Flex>
-      )}
-      {!loading &&
-        searchArray.map((userDetails) => (
-          <UserSearchCard key={userDetails.id} userDetails={userDetails}></UserSearchCard>
-        ))}
-    </Flex>
+    <Container maxW="container.md" py={8}>
+      <VStack spacing={6} align="stretch">
+        <Box textAlign="center" mb={8}>
+          <Text fontSize="2xl" fontWeight="bold" mb={2}>
+            Find People
+          </Text>
+          <Text color={useColorModeValue("gray.600", "gray.400")} fontSize="md">
+            Search for other users by their username
+          </Text>
+        </Box>
+
+        <Box 
+          bg={bgColor} 
+          p={4} 
+          borderRadius="xl" 
+          boxShadow="sm"
+          border="1px"
+          borderColor={borderColor}
+        >
+          <InputGroup size="lg">
+            <InputLeftElement pointerEvents="none">
+              <SearchIcon color={placeholderColor} />
+            </InputLeftElement>
+            <Input
+              type="text"
+              placeholder="Type username to search..."
+              variant="filled"
+              bg={useColorModeValue("gray.50", "#151515")}
+              _hover={{
+                bg: useColorModeValue("gray.100", "#202020")
+              }}
+              _focus={{
+                bg: useColorModeValue("gray.50", "#151515"),
+                borderColor: "gray.600"
+              }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </InputGroup>
+        </Box>
+
+        {loading ? (
+          <Flex justify="center" py={10}>
+            <Spinner 
+              size="xl" 
+              thickness="4px"
+              speed="0.65s"
+              color="blue.500"
+            />
+          </Flex>
+        ) : searchArray.length > 0 ? (
+          <VStack 
+            spacing={2} 
+            bg={bgColor} 
+            borderRadius="xl" 
+            boxShadow="sm"
+            border="1px"
+            borderColor={borderColor}
+            p={4}
+          >
+            {searchArray.map((userDetails) => (
+              <UserSearchCard 
+                key={userDetails.id} 
+                userDetails={userDetails}
+              />
+            ))}
+          </VStack>
+        ) : searchQuery && !loading && (
+          <Flex justify="center" py={10}>
+            <Text color={useColorModeValue("gray.600", "gray.400")}>
+              No users found matching "{searchQuery}"
+            </Text>
+          </Flex>
+        )}
+      </VStack>
+    </Container>
   );
 });
 
