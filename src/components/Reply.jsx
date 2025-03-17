@@ -154,10 +154,9 @@ const Reply = React.memo(
                       fontSize={"l"}
                       fontWeight={"bold"}
                       _hover={{
-                        boxShadow: "0 0 20px rgba(128, 128, 128, 0.7)",
-                        bg: "transparent",
+                        color: "gray.600",
+                        transition: "color 0.2s ease-in-out",
                       }}
-                      onClick={() => {}}
                     >
                       {reply.username}
                     </Text>
@@ -179,9 +178,13 @@ const Reply = React.memo(
             <Link
               as={RouterLink}
               to={replypath}
-              style={{ textDecoration: "none" }}
+              _hover={{ textDecoration: "none" }}
             >
-              <Text fontSize={"15px"} mb={3}>
+              <Text 
+                fontSize={"15px"} 
+                mb={3}
+                px={2}
+              >
                 {reply.text}
               </Text>
               {reply.image && (
@@ -190,6 +193,11 @@ const Reply = React.memo(
                   overflow={"hidden"}
                   border={"1px solid"}
                   borderColor={"gray.light"}
+                  mx={2}
+                  _hover={{
+                    opacity: 0.95,
+                    transition: "opacity 0.2s ease-in-out",
+                  }}
                 >
                   <Image src={reply.image} w={"full"} maxHeight={"460px"} />
                 </Box>
@@ -222,8 +230,20 @@ const Reply = React.memo(
             </HStack>
             <HStack gap={2}>
               {likesCount > 0 ? (
-                <Link as={RouterLink} to={likespath}>
-                  <Text color="#777777">{likesCount} likes</Text>
+                <Link
+                  as={RouterLink}
+                  to={likespath}
+                  _hover={{ textDecoration: "none" }}
+                >
+                  <Text
+                    color="#777777"
+                    _hover={{
+                      color: "gray.600",
+                      transition: "color 0.2s ease-in-out",
+                    }}
+                  >
+                    {likesCount} likes
+                  </Text>
                 </Link>
               ) : (
                 <Text color="#777777">{likesCount} likes</Text>

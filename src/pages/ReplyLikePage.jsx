@@ -95,8 +95,19 @@ const ReplyLikePage = React.memo(() => {
                     <Avatar size="md" src={item.profile_picture} />
                     <VStack align="start" spacing={0.5}>
                       <HStack>
-                        <Link as={RouterLink} to={`/user/${item?.user_id}`}>
-                          <Text fontSize={"md"} fontWeight={"bold"}>
+                        <Link
+                          as={RouterLink}
+                          to={`/user/${item?.user_id}`}
+                          _hover={{ textDecoration: "none" }}
+                        >
+                          <Text
+                            fontSize={"l"}
+                            fontWeight={"bold"}
+                            _hover={{
+                              color: "gray.600",
+                              transition: "color 0.2s ease-in-out",
+                            }}
+                          >
                             {item?.username}
                           </Text>
                         </Link>

@@ -12,10 +12,13 @@ export const userSlice = createSlice({
     },
     changeUsername:(state,action)=>{
       return {...state,username:action.payload};
+    },
+    changeVerifiedStatus:(state,action)=>{
+      return {...state,verified:action.payload};
     }
   }
 });
 
-export const { changeUser,changeName,changeUsername } = userSlice.actions;
+export const { changeUser,changeName,changeUsername,changeVerifiedStatus } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -138,15 +138,14 @@ const Post = React.memo(
                       fontSize={"l"}
                       fontWeight={"bold"}
                       _hover={{
-                        boxShadow: "0 0 20px rgba(128, 128, 128, 0.7)",
-                        bg: "transparent",
+                        color: "gray.600",
+                        transition: "color 0.2s ease-in-out",
                       }}
-                      onClick={() => {}}
                     >
                       {post.username}
                     </Text>
                   </Link>
-                  <Image src="/verified.png" w={4} h={4} />
+                 {post.verified && post.verified === true && <Image src="/verified.png" w={4} h={4} />}
                 </HStack>
               </Flex>
               <Flex gap={4} alignItems={"center"}>
@@ -163,9 +162,12 @@ const Post = React.memo(
             <Link
               as={RouterLink}
               to={postpath}
-              style={{ textDecoration: "none" }}
+              _hover={{ textDecoration: "none" }}
             >
-              <Text fontSize={"15px"} mb={3}>
+              <Text 
+                fontSize={"15px"} 
+                mb={3}
+              >
                 {post.text}
               </Text>
               {post.image && (
@@ -174,6 +176,10 @@ const Post = React.memo(
                   overflow={"hidden"}
                   border={"1px solid"}
                   borderColor={"gray.light"}
+                  _hover={{
+                    opacity: 0.95,
+                    transition: "opacity 0.2s ease-in-out",
+                  }}
                 >
                   <Image src={post.image} w={"full"} maxHeight={"460px"} />
                 </Box>
@@ -206,8 +212,14 @@ const Post = React.memo(
             </HStack>
             <HStack gap={2}>
               {likesCount > 0 ? (
-                <Link as={RouterLink} to={likespath}>
-                  <Text color="#777777">{likesCount} likes</Text>
+                <Link 
+                  as={RouterLink} 
+                  to={likespath}
+                  _hover={{ textDecoration: "none" }}
+                >
+                  <Text color="#777777">
+                    {likesCount} likes
+                  </Text>
                 </Link>
               ) : (
                 <Text color="#777777">{likesCount} likes</Text>

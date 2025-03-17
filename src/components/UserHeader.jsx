@@ -142,13 +142,39 @@ const UserHeader = ({ user }) => {
         paddingX={"6"}
       >
         <Box>
-          <Text fontSize={"3xl"} fontWeight={"bold"}>
-            {user.name}
-          </Text>
-          <Flex gap={4} alignItems={"center"}>
-            <Text fontSize={"md"} color={"gray"}>
-              ~{user.username}
+          <Link 
+            as={RouterLink} 
+            to={`/user/${user._id}`}
+            _hover={{ textDecoration: "none" }}
+          >
+            <Text 
+              fontSize={"3xl"} 
+              fontWeight={"bold"}
+              _hover={{
+                color: "gray.600",
+                transition: "color 0.2s ease-in-out",
+              }}
+            >
+              {user.name}
             </Text>
+          </Link>
+          <Flex gap={4} alignItems={"center"}>
+            <Link 
+              as={RouterLink} 
+              to={`/user/${user._id}`}
+              _hover={{ textDecoration: "none" }}
+            >
+              <Text 
+                fontSize={"md"} 
+                color={"gray"}
+                _hover={{
+                  color: "gray.600",
+                  transition: "color 0.2s ease-in-out",
+                }}
+              >
+                ~{user.username}
+              </Text>
+            </Link>
             <Code
               fontSize={"sm"}
               bg={"gray"}
@@ -216,23 +242,35 @@ const UserHeader = ({ user }) => {
       {/* <Text>{user.bio}</Text> */}
       <Flex w={"full"} justifyContent={"left"} margin={6} gap={2}>
         {currentuser?._id === user._id && (
-          <Link as={RouterLink} to="/user/updateinfo">
+          <Link 
+            as={RouterLink} 
+            to="/user/updateinfo"
+            _hover={{ textDecoration: "none" }}
+          >
             <Button
               size={"sm"}
-              bg={colorMode == "dark" ? "white" : "black"}
-              color={colorMode == "dark" ? "black" : "white"}
-              _hover={{ bg: "white", color: "black" }}
+              bg={colorMode === "dark" ? "white" : "black"}
+              color={colorMode === "dark" ? "black" : "white"}
+              _hover={{ 
+                bg: "white", 
+                color: "black",
+                transition: "all 0.2s ease-in-out"
+              }}
             >
               Update Profile
             </Button>
           </Link>
         )}
         <Button
-          bg={colorMode == "dark" ? "white" : "black"}
-          color={colorMode == "dark" ? "black" : "white"}
+          bg={colorMode === "dark" ? "white" : "black"}
+          color={colorMode === "dark" ? "black" : "white"}
           size={"sm"}
           onClick={() => {}}
-          _hover={{ bg: "white", color: "black" }}
+          _hover={{ 
+            bg: "white", 
+            color: "black",
+            transition: "all 0.2s ease-in-out"
+          }}
         >
           Share Profile
         </Button>
@@ -240,7 +278,16 @@ const UserHeader = ({ user }) => {
       <Flex w={"full"} justifyContent={"space-between"}>
         <Flex gap={2} alignItems={"center"}>
           <Box w="1" h="1" bg={"gray.light"} borderRadius={"full"}></Box>
-          <Link color={"gray.light"} to="/">
+          <Link 
+            as={RouterLink}
+            to="/"
+            color={"gray.light"}
+            _hover={{ 
+              textDecoration: "none",
+              color: "gray.600",
+              transition: "color 0.2s ease-in-out"
+            }}
+          >
             netthreads.com
           </Link>
         </Flex>
@@ -279,6 +326,10 @@ const UserHeader = ({ user }) => {
           justifyContent={"center"}
           pb="3"
           cursor={"pointer"}
+          _hover={{
+            color: "gray.600",
+            transition: "color 0.2s ease-in-out"
+          }}
         >
           <Text fontWeight={"bold"}> {user.name}'s Activity</Text>
         </Flex>

@@ -148,6 +148,14 @@ const Header = () => {
                   {/* You can use any icon here for theme toggle */}
                 </Flex>
               </MenuItem>
+              {!user?.verified && (
+                <MenuItem as={RouterLink} to="/user/verify">
+                  <Flex justifyContent="space-between" width="100%">
+                    <Box>Get Verified</Box>
+                    <Image src="/verified.png" w={5} h={5} />
+                  </Flex>
+                </MenuItem>
+              )}
               <MenuItem onClick={handleLogout}>
                 <Flex justifyContent="space-between" width="100%">
                   <Box>Sign Out</Box>

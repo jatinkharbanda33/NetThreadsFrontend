@@ -13,6 +13,8 @@ import {
   Icon,
   HStack,
   Link,
+  Container,
+  Image,
 } from "@chakra-ui/react";
 import { MdAttachment } from "react-icons/md";
 import { toast } from "sonner";
@@ -21,7 +23,7 @@ import useFileUpload from "../hooks/use-File-Upload";
 import { useNavigate } from "react-router-dom";
 
 const NewPost = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const dividerColor = useColorModeValue("black", "gray.500");
   const [thread, setThread] = useState("");
   const { file, filePreview, handleFileChange, clearFile } = useFileUpload();
@@ -38,7 +40,7 @@ const NewPost = () => {
         requestBody.file_name = file.name;
         requestBody.file_content_type = file.type;
       }
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem("authToken");
       const sendConfig = {
         method: "POST",
         url: `${import.meta.env.VITE_API_BASE_URL}/posts/create`,
@@ -49,7 +51,7 @@ const NewPost = () => {
         data: requestBody,
       };
       const request = await axios(sendConfig);
-      if(request.status==401) navigate("/");
+      if (request.status == 401) navigate("/");
       const response = await request.data;
       if (!response.status) {
         toast.error("An Error Occurred");
@@ -77,12 +79,11 @@ const NewPost = () => {
   const currentuser = useSelector((state) => state.user);
   const fileInputRef = useRef(null);
   const userPath = `/user/${currentuser?._id}`;
-  const handleReset=()=>{
-    console.log("trying to reset")
+  const handleReset = () => {
+    console.log("trying to reset");
     setThread("");
     clearFile();
-
-  }
+  };
   const handleIconClick = () => {
     fileInputRef.current.value = "";
     fileInputRef.current.click();
@@ -106,11 +107,29 @@ const NewPost = () => {
             src={currentuser?.profilepicture}
           />
           <Flex direction={"column"}>
-            <Link as={RouterLink} to={userPath}>
-              <Text px={4} fontSize={"md"} fontWeight={"bold"}>
-                {currentuser?.username}
-              </Text>
-            </Link>
+            <HStack gap={2}>
+              <Link
+                as={RouterLink}
+                to={`/user/${currentuser?._id}`}
+                _hover={{ textDecoration: "none" }}
+              >
+                <Text
+                  fontSize={"l"}
+                  paddingLeft={2}
+                  fontWeight={"bold"}
+                  _hover={{
+                    color: "gray.600",
+                    transition: "color 0.2s ease-in-out",
+                  }}
+                  onClick={() => {}}
+                >
+                  {currentuser?.username}
+                </Text>
+              </Link>
+              {currentuser?.verified && currentuser?.verified === true && (
+                <Image src="/verified.png" w={4} h={4} />
+              )}
+            </HStack>
             <Input
               type="text"
               variant="unstyled"
@@ -151,24 +170,24 @@ const NewPost = () => {
         >
           <Text>Anyone Can Reply</Text>
           <HStack>
-          <Button
-            colorScheme="gray"
-            rounded={"full"}
-            w={"90px"}
-            isDisabled={thread.length === 0 && !file}
-            onClick={handleReset}
-          >
-            Reset
-          </Button>
-          <Button
-            colorScheme="gray"
-            rounded={"full"}
-            w={"90px"}
-            isDisabled={thread.length === 0 && !file}
-            onClick={handlePost}
-          >
-            Post
-          </Button>
+            <Button
+              colorScheme="gray"
+              rounded={"full"}
+              w={"90px"}
+              isDisabled={thread.length === 0 && !file}
+              onClick={handleReset}
+            >
+              Reset
+            </Button>
+            <Button
+              colorScheme="gray"
+              rounded={"full"}
+              w={"90px"}
+              isDisabled={thread.length === 0 && !file}
+              onClick={handlePost}
+            >
+              Post
+            </Button>
           </HStack>
         </Flex>
       </Flex>

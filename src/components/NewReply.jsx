@@ -13,6 +13,7 @@ import {
   Icon,
   HStack,
   Link,
+  Image,
 } from "@chakra-ui/react";
 import { MdAttachment } from "react-icons/md";
 import { toast } from "sonner";
@@ -109,23 +110,42 @@ const NewReply = (params) => {
             name={currentuser?.name}
             src={currentuser?.profilepicture}
           />
-          <Flex direction={"column"}>
-            <Link as={RouterLink} to={userPath}>
-              <Text px={4} fontSize={"md"} fontWeight={"bold"}>
-                {currentuser?.username}
-              </Text>
-            </Link>
+          <Flex direction={"column"} ml={2}>
+            <Flex alignItems={"center"}>
+              <Link 
+                as={RouterLink} 
+                to={userPath}
+                _hover={{ textDecoration: "none" }}
+              >
+                <Text
+                  fontSize={"l"}
+                  fontWeight={"bold"}
+                  _hover={{
+                    color: "gray.600",
+                    transition: "color 0.2s ease-in-out",
+                  }}
+                >
+                  {currentuser?.username}
+                </Text>
+              </Link>
+              {currentuser?.verified && currentuser?.verified === true && (
+                <Image src="/verified.png" w={4} h={4} ml={1} />
+              )}
+            </Flex>
             <Input
               type="text"
               variant="unstyled"
               p={3}
-              placeholder="Start a NetThread..."
+              placeholder="Reply to this NetThread..."
               size="lg"
               focusBorderColor="grey"
+              value={thread}
+              cursor="text"
+              _hover={{ cursor: "text" }}
               onChange={(e) => {
                 setThread(e.target.value);
               }}
-            ></Input>
+            />
             <Flex px={3} justify={"space-between"} w={"140px"}>
               <Input
                 type="file"

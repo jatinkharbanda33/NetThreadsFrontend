@@ -12,6 +12,7 @@ const PostPage = lazy(() => import("./pages/PostPage"));
 const UserPage = lazy(() => import("./pages/UserPage"));
 const UpdateInfo = lazy(() => import("./pages/UpdateInfo"));
 const SearchPage=lazy(()=>import ("./pages/SearchPage"));
+const EmailVerificationPage=lazy(()=>import ("./pages/EmailVerificationPage"));
 import { Toaster } from "sonner";
 import axios from "axios";
 import ReplyPage from "./pages/ReplyPage";
@@ -68,6 +69,7 @@ const App = React.memo(() => {
           isUser = response;
         }
       } catch (err) {
+        refreshToken();
         console.error(err);
       }
     };
@@ -185,6 +187,16 @@ const App = React.memo(() => {
                 }
               />
               <Route path="/" element={<Navigate to="/auth" />} />
+              <Route
+                path="/user/verify"
+                element={
+                  isUser || localStorage.getItem("authToken") ? (
+                    <EmailVerificationPage />
+                  ) : (
+                    <Navigate to="/auth" />
+                  )
+                }
+              />
             </Routes>
           )}
         </Suspense>
