@@ -86,31 +86,10 @@ const Reply = React.memo(
       }
     };
     useEffect(() => {
-      const isLiked = async () => {
-        try {
-          const token = localStorage.getItem("authToken");
-          const sendConfig = {
-            method: "GET",
-            url: `${import.meta.env.VITE_API_BASE_URL}/reply/get/isLiked/${
-              reply._id
-            }`,
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          };
-          const request = await axios(sendConfig);
-          if (request.status == 401) navigate("/");
-          const response = await request.data;
-          if (!response.status) {
-            return;
-          }
-          setLike(response["answer"]);
-        } catch (err) {
-          console.log(err);
-        }
-      };
-      isLiked();
+      if(reply?.likedByUser && reply.likedByUser==true){
+        setLike(true);
+      }
+     
     }, []);
     // function formatTimestamp(timestamp) {
     //   const now = new Date();

@@ -1,213 +1,113 @@
 import { Container, Box, Spinner, Flex, useColorMode } from "@chakra-ui/react";
-import React, { Suspense, lazy } from "react";
-import Header from "./components/Header";
-import { Navigate, Route, Routes ,useNavigate} from "react-router-dom";
+import React, { Suspense, lazy, useEffect, useState } from "react";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect ,useState} from "react";
 import { changeUser } from "./redux/slices/userSlice";
-const HomePage = lazy(() => import("./pages/HomePage"));
-const AuthPage = lazy(() => import("./pages/AuthPage"));
+import Header from "./components/Header";
+import axios from "axios";
+import { Toaster } from "sonner";
+
+// Lazy-loaded pages
+import HomePage from "./pages/HomePage";
+import AuthPage from "./pages/AuthPage";
 const LikePage = lazy(() => import("./pages/LikePage"));
 const PostPage = lazy(() => import("./pages/PostPage"));
 const UserPage = lazy(() => import("./pages/UserPage"));
 const UpdateInfo = lazy(() => import("./pages/UpdateInfo"));
-const SearchPage=lazy(()=>import ("./pages/SearchPage"));
-const EmailVerificationPage=lazy(()=>import ("./pages/EmailVerificationPage"));
-import { Toaster } from "sonner";
-import axios from "axios";
-import ReplyPage from "./pages/ReplyPage";
-import ReplyLikePage from "./pages/ReplyLikePage";
-const App = React.memo(() => {
-  const [loading, setLoading] = useState(true);
-  const { colorMode, toggleColorMode } = useColorMode();
-  const navigate=useNavigate();
-  let isUser = useSelector((state) => state.user);
-  const authToken=localStorage.getItem('authToken');
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const refreshToken = async () => {
-      try {
-        const sendConfig = {
-          method: "GET",
-          url: `${import.meta.env.VITE_API_BASE_URL}/users/refresh/token`,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        };
-        const request = await axios(sendConfig);
-        const response = await request.data;
-        if (request.status == false) {
-          return;
-        }
-        localStorage.setItem("authToken", response.authToken);
-        window.location.reload();
-        isUser = response;
-      } catch (err) {
-        return;
-      }
-    };
-    const getUser = async () => {
-      try {
-        if (authToken && !isUser) {
-          const token = localStorage.getItem("authToken");
-          console.log(token);
-          const sendConfig = {
-            method: "POST",
-            url:  `${import.meta.env.VITE_API_BASE_URL}/users/getuser/token`,
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          };
-          const request = await axios(sendConfig);
-          const response = await request.data;
-          if (request.status == false) {
-            return;
-          }
-          dispatch(changeUser(response));
-          isUser = response;
-        }
-      } catch (err) {
-        refreshToken();
-        console.error(err);
-      }
-    };
-   if(!isUser && localStorage.getItem('authToken')){
-    getUser();
-   }
-   else{
-    refreshToken();
-   }
+const SearchPage = lazy(() => import("./pages/SearchPage"));
+const EmailVerificationPage = lazy(() => import("./pages/EmailVerificationPage"));
+const ReplyPage = lazy(() => import("./pages/ReplyPage"));
+const ReplyLikePage = lazy(() => import("./pages/ReplyLikePage"));
 
+// Protected Route Component
+const ProtectedRoute = ({ element }) => {
+  const isUser = useSelector((state) => state.user);
+  const authToken = localStorage.getItem("authToken");
+  return isUser || authToken ? element : <Navigate to="/auth" />;
+};
+
+const App = React.memo(() => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isUser = useSelector((state) => state.user);
+  const authToken = localStorage.getItem("authToken");
+  const { colorMode } = useColorMode();
+  const [loading, setLoading] = useState(true);
+
+  const refreshToken = async () => {
+    try {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/refresh/token`, {
+        withCredentials: true,
+      });
+      if (data?.authToken) {
+        localStorage.setItem("authToken", data.authToken);
+        dispatch(changeUser(data));
+        window.location.reload();
+      }
+    } catch (err) {
+      console.error("Token refresh failed", err);
+    }
+  };
+
+  const getUser = async () => {
+    try {
+      if (authToken && !isUser) {
+        const { data } = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/users/getuser/token`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
+        dispatch(changeUser(data));
+      }
+    } catch (err) {
+      await refreshToken();
+    }
+  };
+
+  useEffect(() => {
+    if (!isUser && authToken) {
+      getUser();
+    } else if (!authToken) {
+      refreshToken();
+    }
     setLoading(false);
   }, []);
+
+  const routes = [
+    { path: "/home", element: <HomePage /> },
+    { path: "/post/likes/:id", element: <LikePage /> },
+    { path: "/reply/likes/:id", element: <ReplyLikePage /> },
+    { path: "/post/:id", element: <PostPage /> },
+    { path: "/reply/:id", element: <ReplyPage /> },
+    { path: "/user/:id", element: <UserPage /> },
+    { path: "/user/updateinfo", element: <UpdateInfo /> },
+    { path: "/user/search", element: <SearchPage /> },
+    { path: "/user/verify", element: <EmailVerificationPage /> },
+  ];
+
   return (
-    <Box position={"relative"} w={"full"}>
+    <Box position="relative" w="full">
       <Container maxW="620px">
         <Header />
-        <Suspense
-          fallback={
-            <Flex justify={"center"}>
-              <Spinner size="xl"></Spinner>
-            </Flex>
-          }
-        >
-          {loading && (
-            <Flex justify={"center"}>
-              <Spinner size="xl"></Spinner>
-            </Flex>
-          )}
-          {!loading && (
+        <Suspense fallback={<Flex justify="center"><Spinner size="xl" /></Flex>}>
+          {loading ? (
+            <Flex justify="center"><Spinner size="xl" /></Flex>
+          ) : (
             <Routes>
-              <Route
-                path={"/home"}
-                element={
-                  isUser || localStorage.getItem("authToken") ? (
-                    <HomePage />
-                  ) : (
-                    <Navigate to="/auth" />
-                  )
-                }
-              />
-
-              <Route
-                path="/auth"
-                element={!isUser ? <AuthPage /> : <Navigate to="/home" />}
-              />
-              <Route
-                path="/post/likes/:id"
-                element={
-                  isUser || localStorage.getItem("authToken") ? (
-                    <LikePage />
-                  ) : (
-                    <Navigate to="/auth" />
-                  )
-                }
-              />
-              <Route
-                path="/reply/likes/:id"
-                element={
-                  isUser || localStorage.getItem("authToken") ? (
-                    <ReplyLikePage />
-                  ) : (
-                    <Navigate to="/auth" />
-                  )
-                }
-              />
-              <Route
-                path="/post/:id"
-                element={
-                  isUser || localStorage.getItem("authToken") ? (
-                    <PostPage />
-                  ) : (
-                    <Navigate to="/auth" />
-                  )
-                }
-              />
-               <Route
-                path="/reply/:id"
-                element={
-                  isUser || localStorage.getItem("authToken") ? (
-                    <ReplyPage />
-                  ) : (
-                    <Navigate to="/auth" />
-                  )
-                }
-              />
-              <Route
-                path="/user/:id"
-                element={
-                  isUser || localStorage.getItem("authToken") ? (
-                    <UserPage />
-                  ) : (
-                    <Navigate to="/auth" />
-                  )
-                }
-              />
-              <Route
-                path="/user/updateinfo"
-                element={
-                  isUser || localStorage.getItem("authToken") ? (
-                    <UpdateInfo />
-                  ) : (
-                    <Navigate to="/auth" />
-                  )
-                }
-              />
+              <Route path="/auth" element={isUser ? <Navigate to="/home" /> : <AuthPage />} />
+              {routes.map(({ path, element }) => (
+                <Route key={path} path={path} element={<ProtectedRoute element={element} />} />
+              ))}
               <Route path="/" element={<Navigate to="/auth" />} />
-              <Route
-                path="/user/search"
-                element={
-                  isUser || localStorage.getItem("authToken") ? (
-                    <SearchPage />
-                  ) : (
-                    <Navigate to="/auth" />
-                  )
-                }
-              />
-              <Route path="/" element={<Navigate to="/auth" />} />
-              <Route
-                path="/user/verify"
-                element={
-                  isUser || localStorage.getItem("authToken") ? (
-                    <EmailVerificationPage />
-                  ) : (
-                    <Navigate to="/auth" />
-                  )
-                }
-              />
             </Routes>
           )}
         </Suspense>
-        <Toaster
-          theme={colorMode == "dark" ? "dark" : "light"}
-          toastOptions={{
-            style: { background: colorMode == "dark" ? "#71797E" : "white" },
-          }}
-        />
+        <Toaster theme={colorMode === "dark" ? "dark" : "light"} />
       </Container>
     </Box>
   );
 });
+
 export default App;

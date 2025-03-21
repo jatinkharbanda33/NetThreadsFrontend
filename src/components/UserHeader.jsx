@@ -23,7 +23,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const UserHeader = ({ user }) => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const currentuser = useSelector((state) => state.user);
   const { file, handleFileChange, filePreview, clearFile, setFilePreview } =
     useFileUpload();
@@ -102,36 +101,6 @@ const UserHeader = ({ user }) => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    const getuserprofile = async () => {
-      try {
-        const token = localStorage.getItem("authToken");
-        const sendConfig = {
-          method: "GET",
-          url: `${import.meta.env.VITE_API_BASE_URL}/users/profile/${user}`,
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          data: {},
-        };
-        const request = await axios(sendConfig);
-        const response = await request.data;
-        if (response.error) {
-          console.log(response.error);
-          return;
-        }
-        user = response;
-        console.log("again ", user);
-        setisfollowing(response.isfollowing === 1 ? true : false);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    console.log("Callinng it");
-    getuserprofile();
-  });
   if (!user) return <h1>No user found</h1>;
   return (
     <VStack gap={4} alignItems={"start"}>

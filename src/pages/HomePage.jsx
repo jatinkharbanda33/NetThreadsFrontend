@@ -1,4 +1,4 @@
-import { Box, Flex, Spinner, Button, VStack } from "@chakra-ui/react";
+import { Box, Flex, Spinner, useColorModeValue, Divider } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changePost } from "../redux/slices/postSlice";
@@ -7,6 +7,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import NewPost from "../components/NewPost";
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
+
 const HomePage = React.memo(() => {
   const [loading, setLoading] = useState(false);
   const posts = useSelector((state) => state.post);
@@ -14,7 +15,7 @@ const HomePage = React.memo(() => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
   const navigate=useNavigate();
-
+  const dividerColor = useColorModeValue("black", "gray.500");
   const getFeedPosts = async (isInitialLoad = false) => {
     if (loading ||!hasMore) return;
     setLoading(true);
@@ -63,6 +64,13 @@ const HomePage = React.memo(() => {
     <Flex gap="10" alignItems={"flex-start"} overflowX="hidden" style={{ width: "100%", overflowX: "hidden" }} >
       <Box flex={70} style={{ width: "100%" , maxWidth: "100%"}}>
         <NewPost />
+        <Divider
+        orientation="horizontal"
+        borderColor={dividerColor}
+        borderWidth="1px"
+        mt={4}
+        mb={4}
+      />
         {posts.length > 0  && (
           <Box width="100%">
           <InfiniteScroll

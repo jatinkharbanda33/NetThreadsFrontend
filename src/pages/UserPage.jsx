@@ -11,47 +11,47 @@ const UserPage = React.memo(() => {
   const navigate=useNavigate();
   const [userProfile, setUserProfile] = useState(null);
   const { id } = useParams();
-  const [loading, setLoading] = useState(false);
+  const [userLoading, setUserLoading] = useState(false);
+  const [postLoading, setPostLoading] = useState(false);
   const { ref, inView } = useInView();
   let URL = `${import.meta.env.VITE_API_BASE_URL}/users/profile/${id}`;
-
-  useEffect(() => {
-    const getuser = async () => {
-      try {
-        const token = localStorage.getItem("authToken");
-        setLoading(true);
-        const sendConfig = {
-          method: "GET",
-          url: URL,
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        };
-        const request = await axios(sendConfig);
-        if(request.status==401) navigate("/");
-        const response = await request.data;
-        if (response.error) {
-          console.log(response.error);
-          return;
-        }
-        setUserProfile(response);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
+  const getuser = async () => {
+    try {
+      if(typeof id !== "string") return;
+      const token = localStorage.getItem("authToken");
+      setUserLoading(true);
+      const sendConfig = {
+        method: "GET",
+        url: URL,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      };
+      const request = await axios(sendConfig);
+      if(request.status==401) navigate("/");
+      const response = await request.data;
+      if (response.error) {
+        console.log(response.error);
+        return;
       }
-    };
+      setUserProfile(response);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setUserLoading(false);
+    }
+  };
+  useEffect(() => {
     getuser();
-  }, [URL]);
+  }, []);
 
   const getuserposts = async (props) => {
     if (!id) return;
-
     try {
       const reqbody = { page_count: props.pageParam };
       const token = localStorage.getItem("authToken");
-      setLoading(true);
+      setPostLoading(true);
       const sendConfig = {
         method: "POST",
         url: `${import.meta.env.VITE_API_BASE_URL}/posts/get/userposts/${id}`,
@@ -76,7 +76,7 @@ const UserPage = React.memo(() => {
     } catch (err) {
       console.log(err);
     } finally {
-      setLoading(false);
+      setPostLoading(false);
     }
   };
 
@@ -103,15 +103,15 @@ const UserPage = React.memo(() => {
 
   return (
     <>
-      {loading && (
+      {(userLoading || postLoading) && (
         <Flex justify={"center"}>
           <Spinner size="xl"></Spinner>
         </Flex>
       )}
-      <UserHeader user={userProfile}></UserHeader>
-      {!loading && content?.length === 0 && <h1>User has no posts</h1>}
+      {!userLoading && <UserHeader user={userProfile}></UserHeader>}
+      {!userLoading && !postLoading && content?.length === 0 && <h1>User has no posts</h1>}
 
-      {!loading &&
+      {!userLoading && !postLoading &&
         content?.map((postarr) =>
           postarr?.map((post) => (
             <Post
@@ -122,7 +122,7 @@ const UserPage = React.memo(() => {
             />
           ))
         )}
-      <VStack py={4}>
+      {!postLoading && <VStack py={4}>
         <Button
           variant={"ghost "}
           ref={ref}
@@ -137,7 +137,7 @@ const UserPage = React.memo(() => {
             ? "Load More"
             : "No more threads..."}
         </Button>
-      </VStack>
+      </VStack>}
     </>
   );
 });

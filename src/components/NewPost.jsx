@@ -1,10 +1,8 @@
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link as RouterLink } from "react-router-dom";
-import { Divider, useColorModeValue } from "@chakra-ui/react";
 import ImageModal from "../modals/ImageModal";
 import {
-  Box,
   Flex,
   Input,
   Button,
@@ -13,7 +11,6 @@ import {
   Icon,
   HStack,
   Link,
-  Container,
   Image,
 } from "@chakra-ui/react";
 import { MdAttachment } from "react-icons/md";
@@ -24,7 +21,6 @@ import { useNavigate } from "react-router-dom";
 
 const NewPost = () => {
   const navigate = useNavigate();
-  const dividerColor = useColorModeValue("black", "gray.500");
   const [thread, setThread] = useState("");
   const { file, filePreview, handleFileChange, clearFile } = useFileUpload();
   const handlePost = async () => {
@@ -90,115 +86,100 @@ const NewPost = () => {
   };
 
   return (
-    <>
-      <Flex
-        direction={"column"}
-        p={3}
-        rounded={"lg"}
-        w={{
-          base: "full",
-          md: "600px",
-        }}
-      >
-        <Flex direction={"row"}>
-          <Avatar
-            size="lg"
-            name={currentuser?.name}
-            src={currentuser?.profilepicture}
-          />
-          <Flex direction={"column"}>
-            <HStack gap={2}>
-              <Link
-                as={RouterLink}
-                to={`/user/${currentuser?._id}`}
-                _hover={{ textDecoration: "none" }}
+    <Flex
+      direction={"column"}
+      p={3}
+      rounded={"lg"}
+      w={{
+        base: "full",
+        md: "600px",
+      }}
+    >
+      <Flex direction={"row"}>
+        <Avatar
+          size="lg"
+          name={currentuser?.name}
+          src={currentuser?.profilepicture}
+        />
+        <Flex direction={"column"}>
+          <HStack gap={2}>
+            <Link
+              as={RouterLink}
+              to={`/user/${currentuser?._id}`}
+              _hover={{ textDecoration: "none" }}
+            >
+              <Text
+                fontSize={"l"}
+                paddingLeft={2}
+                fontWeight={"bold"}
+                _hover={{
+                  color: "gray.600",
+                  transition: "color 0.2s ease-in-out",
+                }}
+                onClick={() => {}}
               >
-                <Text
-                  fontSize={"l"}
-                  paddingLeft={2}
-                  fontWeight={"bold"}
-                  _hover={{
-                    color: "gray.600",
-                    transition: "color 0.2s ease-in-out",
-                  }}
-                  onClick={() => {}}
-                >
-                  {currentuser?.username}
-                </Text>
-              </Link>
-              {currentuser?.verified && currentuser?.verified === true && (
-                <Image src="/verified.png" w={4} h={4} />
-              )}
-            </HStack>
+                {currentuser?.username}
+              </Text>
+            </Link>
+            {currentuser?.verified && currentuser?.verified === true && (
+              <Image src="/verified.png" w={4} h={4} />
+            )}
+          </HStack>
+          <Input
+            type="text"
+            variant="unstyled"
+            p={3}
+            placeholder="Start a NetThread..."
+            size="lg"
+            focusBorderColor="grey"
+            value={thread}
+            onChange={(e) => {
+              setThread(e.target.value);
+            }}
+          ></Input>
+          <Flex px={3} justify={"space-between"} w={"140px"}>
             <Input
-              type="text"
-              variant="unstyled"
-              p={3}
-              placeholder="Start a NetThread..."
-              size="lg"
-              focusBorderColor="grey"
-              value={thread}
-              onChange={(e) => {
-                setThread(e.target.value);
-              }}
-            ></Input>
-            <Flex px={3} justify={"space-between"} w={"140px"}>
-              <Input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                style={{ display: "none" }}
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+            <HStack gap={2}>
+              <Icon
+                as={MdAttachment}
+                boxSize={5}
+                onClick={handleIconClick}
+                style={{ cursor: "pointer", border: "none", padding: 0 }}
               />
-              <HStack gap={2}>
-                <Icon
-                  as={MdAttachment}
-                  boxSize={5}
-                  onClick={handleIconClick}
-                  style={{ cursor: "pointer", border: "none", padding: 0 }}
-                />
-                {file && file != null && (
-                  <ImageModal filePreview={filePreview} />
-                )}
-              </HStack>
-            </Flex>
+              {file && file != null && <ImageModal filePreview={filePreview} />}
+            </HStack>
           </Flex>
         </Flex>
-        <Flex
-          justify={"space-between"}
-          alignItems={"center"}
-          textColor={"gray"}
-        >
-          <Text>Anyone Can Reply</Text>
-          <HStack>
-            <Button
-              colorScheme="gray"
-              rounded={"full"}
-              w={"90px"}
-              isDisabled={thread.length === 0 && !file}
-              onClick={handleReset}
-            >
-              Reset
-            </Button>
-            <Button
-              colorScheme="gray"
-              rounded={"full"}
-              w={"90px"}
-              isDisabled={thread.length === 0 && !file}
-              onClick={handlePost}
-            >
-              Post
-            </Button>
-          </HStack>
-        </Flex>
       </Flex>
-      <Divider
-        orientation="horizontal"
-        borderColor={dividerColor}
-        borderWidth="1px"
-        mt={4}
-        mb={4}
-      />
-    </>
+      <Flex justify={"space-between"} alignItems={"center"} textColor={"gray"}>
+        <Text>Anyone Can Reply</Text>
+        <HStack>
+          <Button
+            colorScheme="gray"
+            rounded={"full"}
+            w={"90px"}
+            isDisabled={thread.length === 0 && !file}
+            onClick={handleReset}
+          >
+            Reset
+          </Button>
+          <Button
+            colorScheme="gray"
+            rounded={"full"}
+            w={"90px"}
+            isDisabled={thread.length === 0 && !file}
+            onClick={handlePost}
+          >
+            Post
+          </Button>
+        </HStack>
+      </Flex>
+    </Flex>
   );
 };
 

@@ -30,6 +30,7 @@ const OTPDialog = ({ isOpen, onClose, onVerify, email }) => {
     } catch (error) {
       console.error("OTP verification failed:", error);
     } finally {
+      setOtp("");
       setIsLoading(false);
     }
   };

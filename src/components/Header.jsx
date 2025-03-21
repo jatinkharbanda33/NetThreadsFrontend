@@ -78,6 +78,7 @@ const Header = () => {
       toast.success("Logged Out");
       localStorage.removeItem("authToken");
       dispatch(changeUser(null));
+      navigate("/auth",{replace:true});
     } catch (err) {
       toast.error("An Error Occurred");
     }

@@ -6,7 +6,6 @@ import { Link as RouterLink } from "react-router-dom";
 import { FaRegHeart, FaRegComment, FaHeart } from "react-icons/fa";
 import {
   HStack,
-  Spinner,
   Link,
   VStack,
   Divider,
