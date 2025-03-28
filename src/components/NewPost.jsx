@@ -11,7 +11,7 @@ import {
   Icon,
   HStack,
   Link,
-  Image,
+  Image
 } from "@chakra-ui/react";
 import { MdAttachment } from "react-icons/md";
 import { toast } from "sonner";
@@ -143,9 +143,10 @@ const NewPost = () => {
               ref={fileInputRef}
               onChange={handleFileChange}
               style={{ display: "none" }}
+              accept="image/*"
             />
             <HStack gap={2}>
-              <Icon
+              <Button
                 as={MdAttachment}
                 boxSize={5}
                 onClick={handleIconClick}
