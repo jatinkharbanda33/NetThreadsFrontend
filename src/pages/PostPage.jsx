@@ -29,13 +29,13 @@ const PostPage = React.memo( () => {
         if(request.status==401) navigate("/");
         const response=await request.data;
         if(!response.status){
-          console.log(response.error);
+          console.error(response.error);
           return;
         }
         setPost(response.result);
       }
       catch(err){
-        console.log(err);
+        console.error(err);
         setLoading(false);
       }
     }
@@ -59,14 +59,14 @@ const PostPage = React.memo( () => {
         if(request.status==401) navigate("/");
         const response=await request.data;
         if(!response.status){
-          console.log(response.error);
+          console.error(response.error);
           return;
         }
         setPostReplies(response.data);
         setLoading(false);
       }
       catch(err){
-        console.log(err);
+        console.error(err);
         setLoading(false);
       }
     }

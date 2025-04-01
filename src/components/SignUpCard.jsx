@@ -46,7 +46,6 @@ const SignUpCard = () => {
       if(request.status==401) navigate("/");
       const response = await request.data;
       if (response.error) {
-        console.log(response.error);
         toast.error('Invalid Inputs');
         return;
       }

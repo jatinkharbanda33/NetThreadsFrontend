@@ -36,7 +36,7 @@ const HomePage = React.memo(() => {
       if(request.status==401) navigate("/");
       const response = request.data;
       if (response.error) {
-        console.log(response.error);
+        console.error(response.error);
         return;
       }
       if (isInitialLoad) {
@@ -49,7 +49,7 @@ const HomePage = React.memo(() => {
       setHasMore(response.length ==12);
       setLoading(false);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -84,7 +84,7 @@ const HomePage = React.memo(() => {
             endMessage={
               <Flex overflow="hidden" justifyContent={'center'} py={'20px'}  overflowX="hidden">
                 <b>
-                  {posts.length === 0? "No Posts Yet" : "No More Posts"}
+                  {posts.length === 0? "No NetThreads Yet" : "No More NetThreads"}
                 </b>
               </Flex>
             }

@@ -95,7 +95,7 @@ const EmailVerificationPage = () => {
         navigate("/home");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error("Invalid OTP. Please try again.");
     }
   };

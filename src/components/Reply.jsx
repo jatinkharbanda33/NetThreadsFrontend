@@ -4,11 +4,9 @@ import { Image } from "@chakra-ui/image";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { FaRegHeart, FaRegComment, FaHeart } from "react-icons/fa";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { Link as RouterLink } from "react-router-dom";
 import {
   HStack,
-  Spinner,
   Link,
   VStack,
   Divider,
@@ -24,6 +22,27 @@ const Reply = React.memo(
     const [isLiked, setLike] = useState(false);
     const [likesCount, setLikesCount] = useState(reply.likesCount);
     const [repliesCount, setrepliesCount] = useState(reply.repliesCount);
+    const formatTextWithLinks = (text) => {
+      const linkRegex = /(https?:\/\/[^\s]+)/g;
+      return text.split(linkRegex).map((part, index) => {
+        if (part.match(linkRegex)) {
+          return (
+            <Text
+              as="a"
+              key={index}
+              href={part}
+              color="blue.500"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()} // Prevents post click
+            >
+              {part}
+            </Text>
+          );
+        }
+        return part;
+      });
+    };
     const formatTimestamp = (timestamp) => {
       const now = new Date();
       const timestampDate = new Date(timestamp.replace(" ", "T"));
@@ -72,7 +91,7 @@ const Reply = React.memo(
         const response = await request.data;
 
         if (!response.status) {
-          console.log(response.error);
+          console.error(response.error);
           return;
         }
 
@@ -116,7 +135,7 @@ const Reply = React.memo(
           <VStack>
             <Avatar
               size="md"
-              src={reply.profilepicture || "https://bit.ly/broken-link"}
+              src={reply.profilepicture}
               mt={2.5}
             />
           </VStack>
@@ -140,7 +159,7 @@ const Reply = React.memo(
                       {reply.username}
                     </Text>
                   </Link>
-                  <Image src="/verified.png" w={4} h={4} />
+                  {reply.verified && reply.verified === true && <Image src="/verified.png" w={4} h={4} />}
                 </HStack>
               </Flex>
               <Flex gap={4} alignItems={"center"}>
@@ -154,9 +173,10 @@ const Reply = React.memo(
                 </Text>
               </Flex>
             </Flex>
-            <Link
-              as={RouterLink}
-              to={replypath}
+            <Box
+              as="div"
+              onClick={() => navigate(postpath)} // Manual navigation
+              cursor="pointer"
               _hover={{ textDecoration: "none" }}
             >
               <Text 
@@ -164,7 +184,7 @@ const Reply = React.memo(
                 mb={3}
                 px={2}
               >
-                {reply.text}
+                {formatTextWithLinks(reply.text)}
               </Text>
               {reply.image && (
                 <Box
@@ -181,7 +201,7 @@ const Reply = React.memo(
                   <Image src={reply.image} w={"full"} maxHeight={"460px"} />
                 </Box>
               )}
-            </Link>
+            </Box>
             <HStack gap={4}>
               {isLiked ? (
                 <Box
@@ -227,7 +247,17 @@ const Reply = React.memo(
               ) : (
                 <Text color="#777777">{likesCount} likes</Text>
               )}
-              <Text color="#777777">{repliesCount} replies</Text>
+              {repliesCount > 0 ? (
+                <Link
+                  as={RouterLink}
+                  to={replypath}
+                  _hover={{ textDecoration: "none" }}
+                >
+                  <Text color="#777777">{repliesCount} replies</Text>
+                </Link>
+              ) : (
+                <Text color="#777777">{repliesCount} replies</Text>
+              )}
             </HStack>
           </Flex>
         </Flex>

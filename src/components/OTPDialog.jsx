@@ -24,7 +24,6 @@ const OTPDialog = ({ isOpen, onClose, onVerify, email }) => {
   const handleVerify = async () => {
     setIsLoading(true);
     try {
-      console.log("trying to call api");
       await onVerify(otp);
       onClose();
     } catch (error) {

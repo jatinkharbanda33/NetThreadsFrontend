@@ -1,10 +1,9 @@
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link as RouterLink } from "react-router-dom";
-import { Divider, useColorModeValue } from "@chakra-ui/react";
+import { Divider, Textarea, useColorModeValue } from "@chakra-ui/react";
 import ImageModal from "../modals/ImageModal";
 import {
-  Box,
   Flex,
   Input,
   Button,
@@ -22,9 +21,9 @@ import useFileUpload from "../hooks/use-File-Upload";
 import { useNavigate } from "react-router-dom";
 
 const NewReply = (params) => {
-  const postId=params.postId;
-  const nesting_level=params?.nesting_level?params?.nesting_level:0;
-  const navigate=useNavigate();
+  const postId = params.postId;
+  const nesting_level = params?.nesting_level ? params?.nesting_level : 0;
+  const navigate = useNavigate();
   const dividerColor = useColorModeValue("black", "gray.500");
   const [thread, setThread] = useState("");
   const { file, filePreview, handleFileChange, clearFile } = useFileUpload();
@@ -36,15 +35,14 @@ const NewReply = (params) => {
       }
       if (thread) {
         requestBody.text = thread;
-        console.log(postId);
-        requestBody.parent_reply_id=String(postId);
-        requestBody.nesting_level=parseInt(nesting_level+1);
+        requestBody.parent_reply_id = String(postId);
+        requestBody.nesting_level = parseInt(nesting_level + 1);
       }
       if (file) {
         requestBody.file_name = file.name;
         requestBody.file_content_type = file.type;
       }
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem("authToken");
       const sendConfig = {
         method: "POST",
         url: `${import.meta.env.VITE_API_BASE_URL}/reply/create`,
@@ -55,7 +53,7 @@ const NewReply = (params) => {
         data: requestBody,
       };
       const request = await axios(sendConfig);
-      if(request.status==401) navigate("/");
+      if (request.status == 401) navigate("/");
       const response = await request.data;
       if (!response.status) {
         toast.error("An Error Occurred");
@@ -76,13 +74,13 @@ const NewReply = (params) => {
       toast.success("Reply Added");
     } catch (err) {
       toast.error("An Unexpected Error Occurred");
-      console.log(err);
+      console.error(err);
     }
   };
-  const handleReset=()=>{
+  const handleReset = () => {
     setThread("");
     clearFile();
-  }
+  };
 
   const currentuser = useSelector((state) => state.user);
   const fileInputRef = useRef(null);
@@ -94,87 +92,84 @@ const NewReply = (params) => {
   };
 
   return (
-    <>
-      <Flex
-        direction={"column"}
-        p={3}
-        rounded={"lg"}
-        w={{
-          base: "full",
-          md: "600px",
-        }}
-      >
-        <Flex direction={"row"}>
-          <Avatar
-            size="md"
-            name={currentuser?.name}
-            src={currentuser?.profilepicture}
-          />
-          <Flex direction={"column"} ml={2}>
-            <Flex alignItems={"center"}>
-              <Link 
-                as={RouterLink} 
-                to={userPath}
-                _hover={{ textDecoration: "none" }}
+    <Flex
+      direction={"column"}
+      p={3}
+      rounded={"lg"}
+      w={{
+        base: "full",
+        md: "600px",
+      }}
+    >
+      <Flex direction={"row"} gap={1}>
+        <Avatar
+          size="lg"
+          name={currentuser?.name}
+          src={currentuser?.profilepicture}
+        />
+        <Flex direction={"column"} w="full" maxW="600px">
+          <HStack gap={2}>
+            <Link
+              as={RouterLink}
+              to={`/user/${currentuser?._id}`}
+              _hover={{ textDecoration: "none" }}
+            >
+              <Text
+                fontSize={"l"}
+                paddingLeft={2}
+                width="full"
+                fontWeight={"bold"}
+                _hover={{
+                  color: "gray.600",
+                  transition: "color 0.2s ease-in-out",
+                }}
+                onClick={() => {
+                  navigate(userPath);
+                }}
               >
-                <Text
-                  fontSize={"l"}
-                  fontWeight={"bold"}
-                  _hover={{
-                    color: "gray.600",
-                    transition: "color 0.2s ease-in-out",
-                  }}
-                >
-                  {currentuser?.username}
-                </Text>
-              </Link>
-              {currentuser?.verified && currentuser?.verified === true && (
-                <Image src="/verified.png" w={4} h={4} ml={1} />
-              )}
-            </Flex>
+                {currentuser?.username}
+              </Text>
+            </Link>
+            {currentuser?.verified && currentuser?.verified === true && (
+              <Image src="/verified.png" w={4} h={4} />
+            )}
+          </HStack>
+          <Textarea
+            variant="unstyled"
+            p={3}
+            width="full"
+            placeholder="Reply to this NetThread..."
+            size="lg"
+            focusBorderColor="grey"
+            value={thread}
+            onChange={(e) => setThread(e.target.value)}
+            resize="none" // Prevents unwanted resizing by users
+            overflowWrap="break-word" // Ensures long words break correctly
+            wordBreak="break-word"
+          />
+          <Flex px={3} justify={"space-between"} w={"140px"}>
             <Input
-              type="text"
-              variant="unstyled"
-              p={3}
-              placeholder="Reply to this NetThread..."
-              size="lg"
-              focusBorderColor="grey"
-              value={thread}
-              cursor="text"
-              _hover={{ cursor: "text" }}
-              onChange={(e) => {
-                setThread(e.target.value);
-              }}
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+              accept="image/*"
             />
-            <Flex px={3} justify={"space-between"} w={"140px"}>
-              <Input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                style={{ display: "none" }}
+            <HStack gap={2}>
+              <Icon
+                as={MdAttachment}
+                onClick={handleIconClick}
+                boxSize={5}
+                style={{ cursor: "pointer", border: "none", padding: 0 }}
               />
-              <HStack gap={2}>
-                <Icon
-                  as={MdAttachment}
-                  boxSize={5}
-                  onClick={handleIconClick}
-                  style={{ cursor: "pointer", border: "none", padding: 0 }}
-                />
-                {file && file != null && (
-                  <ImageModal filePreview={filePreview} />
-                )}
-              </HStack>
-            </Flex>
+              {file && file != null && <ImageModal filePreview={filePreview} />}
+            </HStack>
           </Flex>
         </Flex>
-        <Flex
-          justify={"space-between"}
-          alignItems={"center"}
-          textColor={"gray"}
-        >
-          <Text>Anyone Can Reply</Text>
-
-          <HStack>
+      </Flex>
+      <Flex justify={"space-between"} alignItems={"center"} textColor={"gray"}>
+        <Text>Anyone Can Reply</Text>
+        <HStack>
           <Button
             colorScheme="gray"
             rounded={"full"}
@@ -193,17 +188,9 @@ const NewReply = (params) => {
           >
             Reply
           </Button>
-          </HStack>
-        </Flex>
+        </HStack>
       </Flex>
-      <Divider
-        orientation="horizontal"
-        borderColor={dividerColor}
-        borderWidth="1px"
-        mt={4}
-        mb={4}
-      />
-    </>
+    </Flex>
   );
 };
 

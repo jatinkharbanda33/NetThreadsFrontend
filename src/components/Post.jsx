@@ -7,7 +7,6 @@ import { FaRegHeart, FaRegComment, FaHeart } from "react-icons/fa";
 import {
   HStack,
   Link,
-  VStack,
   Divider,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -24,6 +23,27 @@ const Post = React.memo(
       post.profilepicture = profilepic;
       post.username = postname;
     }
+    const formatTextWithLinks = (text) => {
+      const linkRegex = /(https?:\/\/[^\s]+)/g;
+      return text.split(linkRegex).map((part, index) => {
+        if (part.match(linkRegex)) {
+          return (
+            <Text
+              as="a"
+              key={index}
+              href={part}
+              color="blue.500"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()} // Prevents post click
+            >
+              {part}
+            </Text>
+          );
+        }
+        return part;
+      });
+    };
     const dividerColor = useColorModeValue("black", "gray.500");
     let postpath = String(`/post/${post._id}`);
     let likespath = String(`/post/likes/${post._id}`);
@@ -52,7 +72,7 @@ const Post = React.memo(
         if (request.status == 401) navigate("/");
         const response = await request.data;
         if (response.error) {
-          console.log(response.error);
+          console.error(response.error);
           return;
         }
 
@@ -64,7 +84,7 @@ const Post = React.memo(
           dispatch(updatePost(newpost));
         }
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     };
     useEffect(() => {
@@ -89,7 +109,7 @@ const Post = React.memo(
           }
           setLike(response["answer"]);
         } catch (err) {
-          console.log(err);
+          console.error(err);
         }
       };
       isLiked();
@@ -116,14 +136,12 @@ const Post = React.memo(
 
     return (
       <Box width="100%" overflowX="hidden">
-        <Flex borderColor={"gray"} >
-          <VStack>
-            <Avatar
-              size="md"
-              src={post.profilepicture || "https://bit.ly/broken-link"}
-              mt={2.5}
-            />
-          </VStack>
+        <Flex borderColor={"gray"} direction={"row"} gap={1}>
+          <Avatar
+            size="md"
+            src={post.profilepicture}
+            mt={2.5}
+          />
           <Flex flex={1} flexDirection={"column"} gap={2} padding={2}>
             <Flex justifyContent={"space-between"} w={"full"}>
               <Flex w={"full"} alignItems={"center"}>
@@ -144,7 +162,9 @@ const Post = React.memo(
                       {post.username}
                     </Text>
                   </Link>
-                 {post.verified && post.verified === true && <Image src="/verified.png" w={4} h={4} />}
+                  {post.verified && post.verified === true && (
+                    <Image src="/verified.png" w={4} h={4} />
+                  )}
                 </HStack>
               </Flex>
               <Flex gap={4} alignItems={"center"}>
@@ -158,16 +178,14 @@ const Post = React.memo(
                 </Text>
               </Flex>
             </Flex>
-            <Link
-              as={RouterLink}
-              to={postpath}
+            <Box
+              as="div"
+              onClick={() => navigate(postpath)} // Manual navigation
+              cursor="pointer"
               _hover={{ textDecoration: "none" }}
             >
-              <Text 
-                fontSize={"15px"} 
-                mb={3}
-              >
-                {post.text}
+              <Text fontSize={"15px"} mb={3}>
+                {formatTextWithLinks(post.text)}
               </Text>
               {post.image && (
                 <Box
@@ -183,7 +201,7 @@ const Post = React.memo(
                   <Image src={post.image} w={"full"} maxHeight={"460px"} />
                 </Box>
               )}
-            </Link>
+            </Box>
             <HStack gap={4}>
               {isLiked ? (
                 <Box
@@ -211,19 +229,27 @@ const Post = React.memo(
             </HStack>
             <HStack gap={2}>
               {likesCount > 0 ? (
-                <Link 
-                  as={RouterLink} 
+                <Link
+                  as={RouterLink}
                   to={likespath}
                   _hover={{ textDecoration: "none" }}
                 >
-                  <Text color="#777777">
-                    {likesCount} likes
-                  </Text>
+                  <Text color="#777777">{likesCount} likes</Text>
                 </Link>
               ) : (
                 <Text color="#777777">{likesCount} likes</Text>
               )}
-              <Text color="#777777">{repliesCount} replies</Text>
+              {repliesCount > 0 ? (
+                <Link
+                  as={RouterLink}
+                  to={postpath}
+                  _hover={{ textDecoration: "none" }}
+                >
+                  <Text color="#777777">{repliesCount} replies</Text>
+                </Link>
+              ) : (
+                <Text color="#777777">{repliesCount} replies</Text>
+              )}
             </HStack>
           </Flex>
         </Flex>

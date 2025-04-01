@@ -96,7 +96,7 @@ const UserHeader = ({ user }) => {
       }
       setFetchAgain(true);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -234,7 +234,7 @@ const UserHeader = ({ user }) => {
           bg={colorMode === "dark" ? "white" : "black"}
           color={colorMode === "dark" ? "black" : "white"}
           size={"sm"}
-          onClick={() => {}}
+          onClick={copyURL}
           _hover={{ 
             bg: "white", 
             color: "black",
@@ -257,7 +257,7 @@ const UserHeader = ({ user }) => {
               transition: "color 0.2s ease-in-out"
             }}
           >
-            netthreads.com
+            netthreads.crabdance.com
           </Link>
         </Flex>
         <Flex>

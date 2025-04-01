@@ -57,7 +57,7 @@ const LoginCard = () => {
         dispatch(changeUser(response));
     }
     catch(err){
-        console.log(err);
+        console.error(err);
         toast.error('An unexpected Error Occurred');
     }
   }

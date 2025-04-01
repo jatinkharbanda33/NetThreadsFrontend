@@ -32,12 +32,12 @@ const UserPage = React.memo(() => {
       if(request.status==401) navigate("/");
       const response = await request.data;
       if (response.error) {
-        console.log(response.error);
+        console.error(response.error);
         return;
       }
       setUserProfile(response);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       setUserLoading(false);
     }
@@ -65,7 +65,7 @@ const UserPage = React.memo(() => {
       if(request.status==401) navigate("/");
       const response = await request.data;
       if (response.error) {
-        console.log(response.error);
+        console.error(response.error);
         return;
       }
       if (response.length === 0) {
@@ -74,7 +74,7 @@ const UserPage = React.memo(() => {
 
       return response;
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       setPostLoading(false);
     }
@@ -135,7 +135,7 @@ const UserPage = React.memo(() => {
             ? "Loading more..."
             : hasNextPage
             ? "Load More"
-            : "No more threads..."}
+            : "No more NetThreads..."}
         </Button>
       </VStack>}
     </>

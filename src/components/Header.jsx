@@ -108,7 +108,7 @@ const Header = () => {
           alt="logo"
           w={10}
           src={colorMode === "dark" ? "/dark_n_new.png" : "/light_n_new.png"}
-          onClick={!user && changeTheme}
+          onClick={!user?  changeTheme: ()=>{}}
         />
       </Link>
       <HStack gap={6}>

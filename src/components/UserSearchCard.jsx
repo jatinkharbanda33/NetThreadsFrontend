@@ -11,7 +11,6 @@ const UserSearchCard = ({ userDetails }) => {
   const hoverBg = useColorModeValue("gray.50", "#202020");
   const borderColor = useColorModeValue("gray.200", "gray.800");
   const secondaryText = useColorModeValue("gray.600", "gray.400");
-  console.log(userDetails);
   return (
     <Box
       w="full"

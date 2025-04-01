@@ -39,7 +39,7 @@ const App = React.memo(() => {
       const { data } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/refresh/token`, {
         withCredentials: true,
       });
-      if (data?.authToken) {
+      if (data?.authToken && data.authToken!=null) {
         localStorage.setItem("authToken", data.authToken);
         dispatch(changeUser(data));
         window.location.reload();
