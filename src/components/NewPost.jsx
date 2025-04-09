@@ -103,9 +103,8 @@ const NewPost = () => {
           src={currentuser?.profilepicture}
         />
         <Flex direction={"column"} w="full" maxW="600px">
-          <HStack gap={2} w="full">
+          <HStack gap={0} w="full">
             <Link
-              w="full"
               as={RouterLink}
               to={`/user/${currentuser?._id}`}
               _hover={{ textDecoration: "none" }}
@@ -113,7 +112,6 @@ const NewPost = () => {
               <Text
                 fontSize={"large"}
                 padding={2}
-                w={"full"}
                 fontWeight={"bold"}
                 _hover={{
                   color: "gray.600",
