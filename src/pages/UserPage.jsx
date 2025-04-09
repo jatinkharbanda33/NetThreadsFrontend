@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import UserHeader from "../components/UserHeader";
-import { Button, VStack, Spinner, Flex } from "@chakra-ui/react";
+import { Button, VStack, Spinner, Flex, Divider, useColorModeValue } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import Post from "../components/Post";
 import { useInView } from "react-intersection-observer";
@@ -14,6 +14,7 @@ const UserPage = React.memo(() => {
   const [userLoading, setUserLoading] = useState(false);
   const [postLoading, setPostLoading] = useState(false);
   const { ref, inView } = useInView();
+  const dividerColor = useColorModeValue("black", "gray.500");
   let URL = `${import.meta.env.VITE_API_BASE_URL}/users/profile/${id}`;
   const getuser = async () => {
     try {
@@ -109,6 +110,13 @@ const UserPage = React.memo(() => {
         </Flex>
       )}
       {!userLoading && <UserHeader user={userProfile}></UserHeader>}
+      <Divider
+        orientation="horizontal"
+        borderColor={dividerColor}
+        borderWidth="1px"
+        mt={4}
+        mb={4}
+      />
       {!userLoading && !postLoading && content?.length === 0 && <h1>User has no posts</h1>}
 
       {!userLoading && !postLoading &&

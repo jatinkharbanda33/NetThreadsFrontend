@@ -108,16 +108,17 @@ const NewReply = (params) => {
           src={currentuser?.profilepicture}
         />
         <Flex direction={"column"} w="full" maxW="600px">
-          <HStack gap={2}>
+          <HStack gap={2} w="full">
             <Link
+             w="full"
               as={RouterLink}
               to={`/user/${currentuser?._id}`}
               _hover={{ textDecoration: "none" }}
             >
               <Text
-                fontSize={"l"}
-                paddingLeft={2}
-                width="full"
+                fontSize={"large"}
+                padding={2}
+                w="full"
                 fontWeight={"bold"}
                 _hover={{
                   color: "gray.600",
@@ -136,7 +137,7 @@ const NewReply = (params) => {
           </HStack>
           <Textarea
             variant="unstyled"
-            p={3}
+            p={2}
             width="full"
             placeholder="Reply to this NetThread..."
             size="lg"
