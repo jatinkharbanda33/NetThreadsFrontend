@@ -54,7 +54,6 @@ const UserHeader = ({ user }) => {
   };
 
   const changeProfilePicture = async () => {
-    setLoading(true);
     try {
       if (!file) {
         return;
@@ -97,9 +96,7 @@ const UserHeader = ({ user }) => {
       setFetchAgain(true);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
   if (!user) return <h1>No user found</h1>;
   return (
